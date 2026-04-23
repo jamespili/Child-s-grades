@@ -3,123 +3,142 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>家长助手-孩子成绩随手记</title>
+    <title>家长提分管家-终极全功能版</title>
     <style>
         :root {
-            --primary: #4F46E5;
-            --success: #10B981;
-            --danger: #EF4444;
-            --bg: #F1F5F9;
-            --card: #FFFFFF;
+            --primary: #4F46E5; --success: #10B981; --warning: #F59E0B; --danger: #EF4444;
+            --bg: #F8FAFC; --card: #FFFFFF;
         }
-
         * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-        body { font-family: -apple-system, sans-serif; background: var(--bg); color: #1E293B; padding-bottom: 100px; }
+        body { font-family: -apple-system, "PingFang SC", sans-serif; background: var(--bg); color: #1E293B; padding-bottom: 100px; }
         .app { max-width: 500px; margin: 0 auto; padding: 16px; }
 
-        /* 顶部 */
-        .header { padding: 10px 0 20px; display: flex; justify-content: space-between; align-items: flex-end; }
-        .header h1 { font-size: 24px; color: var(--primary); }
-        .header p { font-size: 13px; color: #64748B; }
+        /* 顶部状态 */
+        .header { padding: 10px 0 20px; display: flex; justify-content: space-between; align-items: center; }
+        .header h1 { font-size: 22px; color: var(--primary); font-weight: 800; }
+        .grade-tag { font-size: 12px; background: var(--primary); color: white; padding: 3px 10px; border-radius: 20px; margin-top: 5px; display: inline-block; }
 
-        /* 卡片 */
-        .card { background: var(--card); border-radius: 16px; padding: 16px; margin-bottom: 16px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
-        .card-title { font-size: 16px; font-weight: 700; margin-bottom: 12px; display: flex; justify-content: space-between; }
+        /* 核心卡片 */
+        .card { background: var(--card); border-radius: 20px; padding: 18px; margin-bottom: 16px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); border: 1px solid #F1F5F9; }
+        .card-title { font-size: 16px; font-weight: 700; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; }
 
-        /* 统计 */
-        .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 16px; }
-        .stat-item { background: #EEF2FF; padding: 12px 5px; border-radius: 12px; text-align: center; }
-        .stat-label { font-size: 11px; color: var(--primary); font-weight: 600; display: block; }
-        .stat-val { font-size: 18px; font-weight: 800; }
+        /* 提分概览 */
+        .report-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
+        .report-item { padding: 18px; border-radius: 18px; text-align: center; color: white; }
+        .bg-blue { background: linear-gradient(135deg, #6366F1, #4F46E5); }
+        .bg-green { background: linear-gradient(135deg, #34D399, #10B981); }
+        .report-label { font-size: 11px; opacity: 0.9; margin-bottom: 5px; display: block; }
+        .report-val { font-size: 22px; font-weight: 800; }
 
-        /* 批量录入 */
+        /* 提分列表对比 */
+        .compare-row { padding: 14px 0; border-bottom: 1px solid #F1F5F9; }
+        .compare-row:last-child { border: none; }
+        .compare-header { display: flex; justify-content: space-between; align-items: center; }
+        .sub-title { font-weight: 700; font-size: 16px; }
+        .score-box { text-align: right; }
+        .curr-score { font-size: 18px; font-weight: 800; color: #1E293B; }
+        .score-change { font-size: 13px; font-weight: 700; margin-left: 8px; }
+
+        /* 录入行 */
         .batch-row { display: grid; grid-template-columns: 1fr 80px 60px 40px; gap: 8px; align-items: center; padding: 12px 0; border-bottom: 1px solid #F1F5F9; }
-        .batch-row input[type="text"] { font-weight: 600; background: transparent; border: none; padding: 5px; }
-        .batch-row input[type="number"] { padding: 8px; border: 1.5px solid #E2E8F0; border-radius: 8px; text-align: center; }
+        .batch-row input[type="text"] { font-weight: 600; border: none; background: transparent; width: 100%; font-size: 15px; }
+        .batch-row input[type="number"] { padding: 10px; border: 1.5px solid #E2E8F0; border-radius: 10px; text-align: center; font-weight: bold; width: 100%; }
         
-        .btn-del-sub { color: var(--danger); font-size: 18px; border: none; background: none; cursor: pointer; }
-        .btn-add-sub { background: #F1F5F9; color: var(--primary); border: 2px dashed #E2E8F0; border-radius: 12px; padding: 10px; font-size: 13px; font-weight: 600; cursor: pointer; margin-top: 10px; width: 100%; }
+        .btn-add-sub { background: #F1F5F9; color: var(--primary); border: 2px dashed #E2E8F0; border-radius: 14px; padding: 14px; font-size: 14px; font-weight: 600; cursor: pointer; margin: 10px 0; width: 100%; }
+        .btn-primary { width: 100%; padding: 16px; border-radius: 16px; font-weight: 700; border: none; cursor: pointer; background: var(--primary); color: white; margin-top: 15px; font-size: 16px; }
 
-        label { font-size: 12px; color: #64748B; margin-bottom: 4px; display: block; font-weight: 600; }
-        input, select { width: 100%; padding: 10px; border: 1.5px solid #E2E8F0; border-radius: 8px; font-size: 14px; outline: none; }
-        
-        .btn { width: 100%; padding: 15px; border-radius: 12px; font-weight: 700; border: none; cursor: pointer; font-size: 15px; }
-        .btn-primary { background: var(--primary); color: white; margin-top: 20px; }
-        .btn-outline { background: white; border: 1.5px solid #E2E8F0; color: #64748B; margin-top: 8px; }
-
-        /* 导航 */
-        .nav { position: fixed; bottom: 0; left: 0; right: 0; background: white; display: flex; padding: 10px 0 25px; border-top: 1px solid #E2E8F0; z-index: 100; }
+        /* 底部导航 */
+        .nav { position: fixed; bottom: 0; left: 0; right: 0; background: white; display: flex; padding: 10px 0 28px; border-top: 1px solid #E2E8F0; box-shadow: 0 -5px 15px rgba(0,0,0,0.03); z-index: 1000; }
         .nav-item { flex: 1; text-align: center; font-size: 11px; color: #94A3B8; cursor: pointer; }
         .nav-item.active { color: var(--primary); font-weight: 700; }
-        .nav-item i { font-size: 20px; display: block; margin-bottom: 4px; font-style: normal; }
+        .nav-item i { font-size: 24px; display: block; margin-bottom: 4px; font-style: normal; }
 
         .section { display: none; }
-        .section.active { display: block; }
-        
-        .exam-item { border-left: 4px solid var(--primary); padding: 10px; background: #F8FAFC; border-radius: 4px 12px 12px 4px; margin-bottom: 12px; }
+        .section.active { display: block; animation: fadeIn 0.4s ease; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .exam-item { border-left: 5px solid var(--primary); padding: 14px; background: #F8FAFC; border-radius: 6px 15px 15px 6px; margin-bottom: 12px; }
+        .text-success { color: var(--success); }
+        .text-danger { color: var(--danger); }
+        .text-gray { color: #94A3B8; }
     </style>
 </head>
 <body>
 
 <div class="app">
     <div class="header">
-        <div><h1 id="top-name">孩子成绩</h1><p id="top-grade">未设置</p></div>
-        <div style="font-size: 24px;">📝</div>
+        <div>
+            <h1 id="top-name">孩子成绩</h1>
+            <span class="grade-tag" id="top-grade">未设置</span>
+        </div>
+        <div style="font-size: 30px;">📂</div>
     </div>
 
     <div class="section active" id="sec-home">
-        <div class="stats">
-            <div class="stat-item"><span class="stat-label">全科均分</span><div class="stat-val" id="st-avg">--</div></div>
-            <div class="stat-item"><span class="stat-label">上阵对比</span><div class="stat-val" id="st-trend">--</div></div>
-            <div class="stat-item"><span class="stat-label">考试场次</span><div class="stat-val" id="st-count">0</div></div>
+        <div class="report-grid">
+            <div class="report-item bg-blue">
+                <span class="report-label">本次考试总分</span>
+                <div class="report-val" id="res-total">--</div>
+            </div>
+            <div class="report-item bg-green">
+                <span class="report-label">较上次波动</span>
+                <div class="report-val" id="res-diff">--</div>
+            </div>
         </div>
-        <div class="card"><div class="card-title">📉 成绩趋势走势</div><div style="height: 180px;"><canvas id="mainChart"></canvas></div></div>
-        <div class="card"><div class="card-title">📌 最近一次成绩单</div><div id="latest-detail"></div></div>
+
+        <div class="card">
+            <div class="card-title">🎯 提分对比 (本次 vs 上次)</div>
+            <div id="compare-list"></div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">📈 成绩走势图 (总分)</div>
+            <div style="height: 180px;"><canvas id="mainChart"></canvas></div>
+        </div>
     </div>
 
     <div class="section" id="sec-add">
         <div class="card">
-            <div class="card-title">✍️ 批量录入全科成绩</div>
-            <label>考试名称</label>
-            <input type="text" id="inp-exam-name" placeholder="如：2026春季期中考试">
-            <label>考试日期</label>
+            <div class="card-title">✍️ 批量录入考试</div>
+            <label style="font-size:12px; font-weight:600; color:#64748B;">考试名称 (如：高一期中)</label>
+            <input type="text" id="inp-exam-name" placeholder="请输入考试描述">
+            
+            <label style="font-size:12px; font-weight:600; color:#64748B; margin-top:12px; display:block;">考试日期</label>
             <input type="date" id="inp-date">
 
-            <div style="margin-top: 15px;">
-                <div style="display: grid; grid-template-columns: 1fr 80px 60px 40px; font-size: 11px; color: #94A3B8; padding-bottom: 5px;">
-                    <span>科目(点名字可改)</span><span>得分</span><span>满分</span><span></span>
-                </div>
-                <div id="batch-list"></div>
-                <button class="btn-add-sub" onclick="addNewSubjectRow()">+ 增加新科目 (如奥数、编程)</button>
+            <div style="margin-top: 20px;">
+                <div id="batch-input-list"></div>
+                <button class="btn-add-sub" onclick="addNewSubjectRow()">+ 增加自定义科目 (如：物理、钢琴)</button>
             </div>
 
-            <label style="margin-top: 15px;">综合备注</label>
-            <input type="text" id="inp-remark" placeholder="孩子表现点评...">
-            <button class="btn btn-primary" onclick="doSave()">一键保存本次考试</button>
+            <button class="btn-primary" onclick="doSave()">保存并返回看板</button>
         </div>
     </div>
 
     <div class="section" id="sec-data">
         <div class="card">
-            <div class="card-title">📂 档案与学期导出</div>
-            <label>学期筛选</label>
-            <select id="sel-term">
-                <option value="all">显示全部历史</option>
+            <div class="card-title">📤 导出成绩表格 (CSV)</div>
+            <p style="font-size:12px; color:#64748B; margin-bottom:12px;">导出当前年级的成绩单，可用 Excel 打开。</p>
+            <select id="sel-term" style="width:100%; padding:12px; border-radius:12px; border:1px solid #E2E8F0; margin-bottom:12px; background:#F8FAFC; font-weight:600;">
+                <option value="all">该年级全部记录</option>
                 <option value="up">上学期 (9月-1月)</option>
                 <option value="down">下学期 (2月-8月)</option>
             </select>
-            <button class="btn btn-primary" onclick="exportData()">导出选中学期数据</button>
+            <button class="btn-primary" onclick="exportToCSV()">生成表格文件导出</button>
         </div>
-        <div id="history-list"></div>
+        <div class="card">
+            <div class="card-title">📜 历史明细 (仅当前年级)</div>
+            <div id="history-list"></div>
+        </div>
     </div>
 
     <div class="section" id="sec-set">
         <div class="card">
-            <div class="card-title">⚙️ 基本设置</div>
-            <label>孩子姓名</label>
-            <input type="text" id="set-name">
-            <label>当前具体年级</label>
-            <select id="set-grade">
+            <div class="card-title">⚙️ 基础设置</div>
+            <label style="font-size:12px; font-weight:600;">孩子姓名</label>
+            <input type="text" id="set-name" style="margin-bottom:15px;">
+            <label style="font-size:12px; font-weight:600;">当前年级 (切换后数据隔离)</label>
+            <select id="set-grade" style="width:100%; padding:12px; border-radius:12px; border:1px solid #E2E8F0; background:#F8FAFC;">
                 <optgroup label="小学">
                     <option value="小学一年级">小学一年级</option><option value="小学二年级">小学二年级</option>
                     <option value="小学三年级">小学三年级</option><option value="小学四年级">小学四年级</option>
@@ -134,210 +153,205 @@
                     <option value="高中三年级">高中三年级</option>
                 </optgroup>
             </select>
-            <button class="btn btn-primary" onclick="saveSet()">保存并更新科目模板</button>
+            <button class="btn-primary" onclick="saveSet()">保存设置并切换年级</button>
         </div>
-        <div style="padding: 0 20px;"><button class="btn btn-outline" style="color:var(--danger)" onclick="clearAll()">清空全部数据</button></div>
+        <div style="padding: 10px 20px; text-align: center;">
+            <button onclick="clearAll()" style="border:none; background:none; color:var(--danger); font-size:13px; text-decoration:underline; cursor:pointer;">清空全部数据</button>
+        </div>
     </div>
 </div>
 
 <nav class="nav">
-    <div class="nav-item active" onclick="nav('home', 0)"><i>🏠</i>首页</div>
-    <div class="nav-item" onclick="nav('add', 1)"><i>✍️</i>录入</div>
-    <div class="nav-item" onclick="nav('data', 2)"><i>📂</i>存档</div>
+    <div class="nav-item active" onclick="nav('home', 0)"><i>🏠</i>对比看板</div>
+    <div class="nav-item" onclick="nav('add', 1)"><i>✍️</i>录入成绩</div>
+    <div class="nav-item" onclick="nav('data', 2)"><i>📂</i>存档表格</div>
     <div class="nav-item" onclick="nav('set', 3)"><i>⚙️</i>设置</div>
 </nav>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script>
-    const DEFAULT_SUBS = {
-        '小学': ['语文', '数学', '英语', '科学'],
-        '初中': ['语文', '数学', '英语', '物理', '化学', '地理', '历史', '道法'],
-        '高中': ['语文', '数学', '英语', '物理', '化学', '生物', '政治', '历史', '地理']
-    };
-
     let store = {
         exams: [],
         info: { name: '孩子姓名', grade: '小学一年级' },
-        currentSubs: ['语文', '数学', '英语'] // 记忆当前的科目列表
+        currentSubs: ['语文', '数学', '英语']
     };
-
-    let chart = null;
+    let myChart = null;
 
     function init() {
-        const saved = localStorage.getItem('parent_pro_v3');
+        const saved = localStorage.getItem('parent_pro_v8_stable');
         if (saved) store = JSON.parse(saved);
-        
         document.getElementById('inp-date').valueAsDate = new Date();
-        refreshAll();
+        refresh();
     }
 
-    function refreshAll() {
+    function getExams() {
+        return store.exams.filter(ex => ex.grade === store.info.grade);
+    }
+
+    function refresh() {
         document.getElementById('top-name').textContent = store.info.name;
         document.getElementById('top-grade').textContent = store.info.grade;
         document.getElementById('set-name').value = store.info.name;
         document.getElementById('set-grade').value = store.info.grade;
-
-        renderBatchList();
-        renderStats();
-        renderLatest();
+        renderBatchRows();
+        renderHomeCompare();
         renderHistory();
-        renderChart();
+        renderTrend();
     }
 
-    // 渲染录入列表（带删除功能）
-    function renderBatchList() {
-        const box = document.getElementById('batch-list');
+    function renderHomeCompare() {
+        const exams = getExams();
+        const list = document.getElementById('compare-list');
+        if (exams.length === 0) {
+            document.getElementById('res-total').textContent = "--";
+            document.getElementById('res-diff').textContent = "--";
+            list.innerHTML = '<p class="text-gray" style="text-align:center; padding:20px; font-size:13px;">请录入成绩以生成对比报告</p>';
+            return;
+        }
+
+        const latest = exams[0];
+        const prev = exams[1];
+        const getSum = (ex) => Object.values(ex.scores).reduce((a, b) => a + b, 0);
+        const latestSum = getSum(latest);
+        document.getElementById('res-total').textContent = latestSum + "分";
+
+        if (prev) {
+            const diff = (latestSum - getSum(prev)).toFixed(1);
+            document.getElementById('res-diff').textContent = (diff >= 0 ? '+' : '') + diff + "分";
+        } else {
+            document.getElementById('res-diff').textContent = "首考记录";
+        }
+
+        let html = '';
+        Object.keys(latest.scores).forEach(sub => {
+            const curr = latest.scores[sub];
+            const old = (prev && prev.scores[sub] !== undefined) ? prev.scores[sub] : null;
+            const change = old !== null ? (curr - old).toFixed(1) : null;
+            
+            html += `
+                <div class="compare-row">
+                    <div class="compare-header">
+                        <span class="sub-title">${sub}</span>
+                        <div class="score-box">
+                            <span class="curr-score">${curr}<small style="font-size:10px; color:#94A3B8;">/${latest.totals[sub]}</small></span>
+                            ${change !== null ? `
+                                <span class="score-change ${change >= 0 ? 'text-success' : 'text-danger'}">
+                                    ${change >= 0 ? '↑+' : '↓'}${change}分
+                                </span>
+                            ` : '<span class="score-change text-gray">新考</span>'}
+                        </div>
+                    </div>
+                </div>`;
+        });
+        list.innerHTML = html;
+    }
+
+    function renderBatchRows() {
+        const box = document.getElementById('batch-input-list');
         box.innerHTML = store.currentSubs.map((s, idx) => `
-            <div class="batch-row" data-idx="${idx}">
-                <input type="text" value="${s}" onchange="updateSubName(${idx}, this.value)">
+            <div class="batch-row">
+                <input type="text" value="${s}" readonly>
                 <input type="number" class="val-s" placeholder="分">
                 <input type="number" class="val-t" value="100">
-                <button class="btn-del-sub" onclick="delSubRow(${idx})">×</button>
-            </div>
-        `).join('');
-    }
-
-    function updateSubName(idx, val) { store.currentSubs[idx] = val; save(); }
-    
-    function delSubRow(idx) {
-        store.currentSubs.splice(idx, 1);
-        renderBatchList();
-        save();
-    }
-
-    function addNewSubjectRow() {
-        const name = prompt("请输入新科目名称（如：奥数、钢琴、编程）", "新科目");
-        if (name) {
-            store.currentSubs.push(name);
-            renderBatchList();
-            save();
-        }
+                <button style="border:none; background:none; color:#CBD5E1; font-size:24px;" onclick="delSub(${idx})">×</button>
+            </div>`).join('');
     }
 
     function doSave() {
-        const name = document.getElementById('inp-exam-name').value;
+        const name = document.getElementById('inp-exam-name').value.trim();
         const date = document.getElementById('inp-date').value;
-        if (!name) return alert('请输入考试名称');
+        if (!name) return alert('考试名称不能为空！');
 
-        const exam = { id: Date.now(), name, date, remark: document.getElementById('inp-remark').value, scores: {}, totals: {} };
+        const exam = { id: Date.now(), name, date, grade: store.info.grade, scores: {}, totals: {} };
         let hasData = false;
-
         document.querySelectorAll('.batch-row').forEach(row => {
             const sub = row.querySelector('input[type="text"]').value;
             const s = row.querySelector('.val-s').value;
             const t = row.querySelector('.val-t').value;
             if (s !== '') {
                 exam.scores[sub] = parseFloat(s);
-                exam.totals[sub] = parseFloat(t);
+                exam.totals[sub] = parseFloat(t) || 100;
                 hasData = true;
             }
         });
 
-        if (!hasData) return alert('请至少填写一个成绩');
+        if (!hasData) return alert('请至少填写一个分数！');
         store.exams.unshift(exam);
         save();
         document.getElementById('inp-exam-name').value = '';
         document.querySelectorAll('.val-s').forEach(i => i.value = '');
         nav('home', 0);
-        refreshAll();
+        refresh();
     }
 
-    function renderStats() {
-        if (store.exams.length === 0) return;
-        document.getElementById('st-count').textContent = store.exams.length;
-        let totalPct = 0;
-        store.exams.forEach(ex => {
-            let s=0, t=0;
-            Object.keys(ex.scores).forEach(k => { s+=ex.scores[k]; t+=ex.totals[k]; });
-            totalPct += (s/t);
-        });
-        document.getElementById('st-avg').textContent = Math.round((totalPct/store.exams.length)*100) + '%';
-        
-        if (store.exams.length >= 2) {
-            const getP = (ex) => { let s=0,t=0; Object.keys(ex.scores).forEach(k=>{s+=ex.scores[k];t+=ex.totals[k];}); return s/t; };
-            const diff = Math.round((getP(store.exams[0]) - getP(store.exams[1]))*100);
-            document.getElementById('st-trend').textContent = (diff>=0?'+':'') + diff + '%';
+    function exportToCSV() {
+        const exams = getExams();
+        if (exams.length === 0) return alert('该年级无数据可导出。');
+        const term = document.getElementById('sel-term').value;
+        let filtered = exams;
+        if (term !== 'all') {
+            filtered = exams.filter(ex => {
+                const m = new Date(ex.date).getMonth() + 1;
+                return term === 'up' ? (m >= 9 || m <= 1) : (m >= 2 && m <= 8);
+            });
         }
+        if (filtered.length === 0) return alert('该时间段内无记录。');
+
+        const allSubs = [...new Set(filtered.flatMap(ex => Object.keys(ex.scores)))];
+        let csv = "\uFEFF考试名称,日期,总分," + allSubs.join(",") + "\n";
+        filtered.forEach(ex => {
+            const row = [ex.name, ex.date, Object.values(ex.scores).reduce((a,b)=>a+b, 0), ...allSubs.map(s => ex.scores[s] !== undefined ? ex.scores[s] : "-")];
+            csv += row.join(",") + "\n";
+        });
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+        const a = document.createElement("a"); a.href = URL.createObjectURL(blob);
+        a.download = `${store.info.name}_${store.info.grade}_成绩单.csv`; a.click();
     }
 
-    function renderLatest() {
-        const box = document.getElementById('latest-detail');
-        if (store.exams.length === 0) { box.innerHTML = '<p style="text-align:center; color:#94A3B8; padding:20px;">暂无数据</p>'; return; }
-        const ex = store.exams[0];
-        box.innerHTML = `<b>${ex.name}</b><div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:8px;">
-            ${Object.keys(ex.scores).map(s => `<div style="font-size:13px; background:#F1F5F9; padding:6px; border-radius:6px;">${s}: <b>${ex.scores[s]}</b>/${ex.totals[s]}</div>`).join('')}
-        </div>`;
-    }
-
-    function renderHistory() {
-        document.getElementById('history-list').innerHTML = store.exams.map(ex => `
-            <div class="exam-item">
-                <div style="font-weight:700; font-size:14px;">${ex.name} <small style="float:right; color:#94A3B8;">${ex.date}</small></div>
-                <div style="font-size:12px; color:#64748B; margin-top:4px;">${Object.keys(ex.scores).map(s => `${s}:${ex.scores[s]}`).join(' | ')}</div>
-                <button onclick="delExam(${ex.id})" style="color:var(--danger); border:none; background:none; font-size:11px; margin-top:6px;">删除本次考试</button>
-            </div>
-        `).join('');
-    }
-
-    function renderChart() {
+    function renderTrend() {
         const ctx = document.getElementById('mainChart').getContext('2d');
-        if (chart) chart.destroy();
-        if (store.exams.length === 0) return;
-        const data = [...store.exams].slice(0, 10).reverse();
-        chart = new Chart(ctx, {
+        if (myChart) myChart.destroy();
+        const exams = [...getExams()].slice(0, 8).reverse();
+        if (exams.length === 0) return;
+        myChart = new Chart(ctx, {
             type: 'line',
             data: {
-                labels: data.map(ex => ex.name),
-                datasets: [{ label: '均分率', data: data.map(ex => {
-                    let s=0, t=0; Object.keys(ex.scores).forEach(k=>{s+=ex.scores[k];t+=ex.totals[k];}); return Math.round(s/t*100);
-                }), borderColor: '#4F46E5', fill: true, backgroundColor: 'rgba(79, 70, 229, 0.1)', tension: 0.4 }]
+                labels: exams.map(ex => ex.name),
+                datasets: [{ 
+                    data: exams.map(ex => Object.values(ex.scores).reduce((a,b)=>a+b,0)),
+                    borderColor: '#4F46E5', backgroundColor: 'rgba(79, 70, 229, 0.1)', fill: true, tension: 0.4
+                }]
             },
             options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
         });
     }
 
+    function renderHistory() {
+        document.getElementById('history-list').innerHTML = getExams().map(ex => `
+            <div class="exam-item">
+                <div style="font-weight:700;">${ex.name} <small style="float:right; font-weight:400; color:#94A3B8;">${ex.date}</small></div>
+                <div style="font-size:12px; color:#64748B; margin-top:5px;">${Object.keys(ex.scores).map(s => `${s}:${ex.scores[s]}`).join(' | ')}</div>
+                <button onclick="delExam(${ex.id})" style="border:none; background:none; color:var(--danger); font-size:11px; margin-top:10px; cursor:pointer;">× 删除此记录</button>
+            </div>`).join('') || '<p style="text-align:center; color:#94A3B8; padding:20px;">无数据</p>';
+    }
+
+    function saveSet() {
+        store.info.name = document.getElementById('set-name').value;
+        store.info.grade = document.getElementById('set-grade').value;
+        save(); refresh(); alert('保存成功并切换视图！'); nav('home', 0);
+    }
     function nav(id, idx) {
         document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
         document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
         document.getElementById('sec-' + id).classList.add('active');
         document.querySelectorAll('.nav-item')[idx].classList.add('active');
-        if(id === 'home') setTimeout(renderChart, 100);
+        if(id === 'home') setTimeout(renderTrend, 100);
     }
-
-    function saveSet() {
-        store.info.name = document.getElementById('set-name').value;
-        const newGrade = document.getElementById('set-grade').value;
-        
-        // 如果换了大阶段，询问是否重置科目
-        if (store.info.grade.slice(0,2) !== newGrade.slice(0,2)) {
-            if (confirm('检测到学段变更，是否载入该学段的标准科目模板？')) {
-                store.currentSubs = DEFAULT_SUBS[newGrade.slice(0,2)] || store.currentSubs;
-            }
-        }
-        
-        store.info.grade = newGrade;
-        save();
-        refreshAll();
-        alert('设置已保存');
-    }
-
-    function save() { localStorage.setItem('parent_pro_v3', JSON.stringify(store)); }
-    function delExam(id) { if(confirm('确认删除？')) { store.exams = store.exams.filter(e => e.id !== id); save(); refreshAll(); } }
-    function clearAll() { if(confirm('彻底删除？')) { localStorage.clear(); location.reload(); } }
-    function exportData() {
-        const term = document.getElementById('sel-term').value;
-        let data = store.exams;
-        if(term !== 'all') {
-            data = store.exams.filter(ex => {
-                const m = new Date(ex.date).getMonth() + 1;
-                return term === 'up' ? (m >= 9 || m <= 1) : (m >= 2 && m <= 8);
-            });
-        }
-        const blob = new Blob([JSON.stringify({info: store.info, exams: data}, null, 2)], {type:'application/json'});
-        const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
-        a.download = `${store.info.name}_${term}.json`; a.click();
-    }
-
+    function addNewSubjectRow() { const n = prompt("输入科目名称 (如：奥数、物理)",""); if(n){ store.currentSubs.push(n); renderBatchRows(); save(); } }
+    function delSub(idx) { store.currentSubs.splice(idx,1); renderBatchRows(); save(); }
+    function save() { localStorage.setItem('parent_pro_v8_stable', JSON.stringify(store)); }
+    function delExam(id) { if(confirm('确认删除？')){ store.exams = store.exams.filter(e => e.id !== id); save(); refresh(); } }
+    function clearAll() { if(confirm('彻底删除所有年级数据？')){ localStorage.clear(); location.reload(); } }
     init();
 </script>
 </body>
